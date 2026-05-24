@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head><title>Login - Kerala Business Portal</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .box { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 320px; }
+    h2 { margin-bottom: 24px; color: #1a73e8; text-align: center; }
+    input { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    button { width: 100%; background: #1a73e8; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-size: 15px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="box">
+    <h2>Kerala Site Analytics</h2>
+    {% if error %}<p style="color:red; font-size:13px;">{{ error }}</p>{% endif %}
+    <form method="POST">
+        <label>Corporate Email:</label>
+        <input type="email" name="email" value="admin@keralashops.com" required>
+        <label>Password:</label>
+        <input type="password" name="password" value="password123" required>
+        <button type="submit">Sign In to Dashboard</button>
+    </form>
+</div>
+</body>
+</html>
