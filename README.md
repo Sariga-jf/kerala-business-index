@@ -10,6 +10,14 @@ through static choropleth maps (Matplotlib) and an interactive Folium map with
 district-level tooltips. Integrated a live competitor density layer via the 
 Overpass API (OpenStreetMap) with a heatmap overlay.
 
+## Output
+
+![Population Map](assets/population_map.png)
+![Business Suitability Index](assets/Business_Sustainability_Index.png)
+![District Rankings](assets/District_ranking.png)
+![Interactive Folium Map](assets/folium_map.png)
+![Trivandrum Supermarket Competitors](assets/Trivandrum_Competitors.png)
+
 ## Stack
 Python · GeoPandas · Pandas · Matplotlib · Folium · scikit-learn · Overpass API
 

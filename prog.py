@@ -179,90 +179,88 @@ folium.GeoJson(
     )
 ).add_to(m)
 
-# =========================================================================
-# ─── FINAL DYNAMIC OPENSTREETMAP COMPETITOR CODE ───
-# =========================================================================
-import requests
-from folium.plugins import HeatMap
 
-print("Connecting to OpenStreetMap live database...")
+# import requests
+# from folium.plugins import HeatMap
 
-url = "http://overpass-api.de/api/interpreter"
+# print("Connecting to OpenStreetMap live database...")
 
-# Dynamic text search that looks for the administrative boundary of TVM
-query = """
-[out:json][timeout:30];
-area["name"="Thiruvananthapuram"]["boundary"="administrative"]->.searchArea;
-(
-  node["shop"="supermarket"](area.searchArea);
-  way["shop"="supermarket"](area.searchArea);
-);
-out center;
-"""
+# url = "http://overpass-api.de/api/interpreter"
 
-headers = {
-    'User-Agent': 'KeralaBusinessLocatorProject/1.0 (fredy)'
-}
+# # Dynamic text search that looks for the administrative boundary of TVM
+# query = """
+# [out:json][timeout:30];
+# area["name"="Thiruvananthapuram"]["boundary"="administrative"]->.searchArea;
+# (
+#   node["shop"="supermarket"](area.searchArea);
+#   way["shop"="supermarket"](area.searchArea);
+# );
+# out center;
+# """
 
-try:
-    response = requests.get(url, params={'data': query}, headers=headers)
-    heat_data = []
-    marker_layer = folium.FeatureGroup(name="Exact Store Locations")
+# headers = {
+#     'User-Agent': 'KeralaBusinessLocatorProject/1.0 (fredy)'
+# }
+
+# try:
+#     response = requests.get(url, params={'data': query}, headers=headers)
+#     heat_data = []
+#     marker_layer = folium.FeatureGroup(name="Exact Store Locations")
     
-    if response.status_code == 200:
-        osm_data = response.json()
-        elements = osm_data.get('elements', [])
+#     if response.status_code == 200:
+#         osm_data = response.json()
+#         elements = osm_data.get('elements', [])
         
-        for element in elements:
-            lat = element.get('lat') or element.get('center', {}).get('lat')
-            lon = element.get('lon') or element.get('center', {}).get('lon')
-            name = element.get('tags', {}).get('name', 'Local Supermarket')
+#         for element in elements:
+#             lat = element.get('lat') or element.get('center', {}).get('lat')
+#             lon = element.get('lon') or element.get('center', {}).get('lon')
+#             name = element.get('tags', {}).get('name', 'Local Supermarket')
             
-            if lat and lon:
-                heat_data.append([lat, lon])
-                folium.CircleMarker(
-                    location=[lat, lon],
-                    radius=5,
-                    color="red",
-                    fill=True,
-                    fill_color="red",
-                    fill_opacity=0.8,
-                    tooltip=f"<b>Competitor:</b> {name}"
-                ).add_to(marker_layer)
+#             if lat and lon:
+#                 heat_data.append([lat, lon])
+#                 folium.CircleMarker(
+#                     location=[lat, lon],
+#                     radius=5,
+#                     color="red",
+#                     fill=True,
+#                     fill_color="red",
+#                     fill_opacity=0.8,
+#                     tooltip=f"<b>Competitor:</b> {name}"
+#                 ).add_to(marker_layer)
 
-    # FALLBACK CHECK: If the server gave 0 results due to timeouts, load preset local shops
-    if len(heat_data) == 0:
-        print("Server busy or boundary restricted. Injecting pre-mapped local competitor coordinates...")
-        # Hand-mapped prominent hubs inside TVM city limits (Pattom, Kazhakkoottam, East Fort, etc.)
-        fallback_shops = [
-            [8.5241, 76.9366, "Lulu Hypermarket (Anayara)"],
-            [8.5450, 76.9050, "Margin Free Supermarket (Kazhakkoottam)"],
-            [8.4833, 76.9500, "Big Bazaar (East Fort)"],
-            [8.5312, 76.9390, "Reliance Smart Bazar (Pattom)"],
-            [8.5085, 76.9492, "Supplyco Supermarket (Thampanoor)"]
-        ]
-        for shop in fallback_shops:
-            heat_data.append([shop[0], shop[1]])
-            folium.CircleMarker(
-                location=[shop[0], shop[1]],
-                radius=5,
-                color="red",
-                fill=True,
-                fill_color="red",
-                fill_opacity=0.8,
-                tooltip=f"<b>Competitor:</b> {shop[2]}"
-            ).add_to(marker_layer)
+#     # FALLBACK CHECK: If the server gave 0 results due to timeouts, load preset local shops
+#     if len(heat_data) == 0:
+#         print("Server busy or boundary restricted. Injecting pre-mapped local competitor coordinates...")
+#         # Hand-mapped prominent hubs inside TVM city limits (Pattom, Kazhakkoottam, East Fort, etc.)
+#         fallback_shops = [
+#             [8.5241, 76.9366, "Lulu Hypermarket (Anayara)"],
+#             [8.5450, 76.9050, "Margin Free Supermarket (Kazhakkoottam)"],
+#             [8.4833, 76.9500, "Big Bazaar (East Fort)"],
+#             [8.5312, 76.9390, "Reliance Smart Bazar (Pattom)"],
+#             [8.5085, 76.9492, "Supplyco Supermarket (Thampanoor)"]
+#         ]
+#         for shop in fallback_shops:
+#             heat_data.append([shop[0], shop[1]])
+#             folium.CircleMarker(
+#                 location=[shop[0], shop[1]],
+#                 radius=5,
+#                 color="red",
+#                 fill=True,
+#                 fill_color="red",
+#                 fill_opacity=0.8,
+#                 tooltip=f"<b>Competitor:</b> {shop[2]}"
+#             ).add_to(marker_layer)
 
-    # Inject the layers onto your main map object 'm'
-    HeatMap(heat_data, name="Competition Heatmap", radius=20, blur=15).add_to(m)
-    marker_layer.add_to(m)
+#     # Inject the layers onto your main map object 'm'
+#     HeatMap(heat_data, name="Competition Heatmap", radius=20, blur=15).add_to(m)
+#     marker_layer.add_to(m)
     
-    # Layer control toggle panel 
-    folium.LayerControl().add_to(m)
-    print(f"Success! Integrated {len(heat_data)} total competitors onto the map layers.")
+#     # Layer control toggle panel 
+#     folium.LayerControl().add_to(m)
+#     print(f"Success! Integrated {len(heat_data)} total competitors onto the map layers.")
 
-except Exception as e:
-    print(f"Internet request paused or failed: {e}. Keeping default map settings.")
+# except Exception as e:
+#     print(f"Internet request paused or failed: {e}. Keeping default map settings.")
 # =========================================================================
 
 m.save("kerala_business_map.html")
